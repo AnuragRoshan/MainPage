@@ -11,6 +11,10 @@ const UserSchema = new mongoose.Schema({
     
     salt:{
         type:String,
+    },
+
+    admin:{
+        type:Boolean,
     }
 });
 

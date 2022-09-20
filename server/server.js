@@ -3,15 +3,18 @@ const dotenv = require("dotenv")
 const session = require("express-session");
 const MongoStore = require('connect-mongo');
 const routes = require("./routes/routes")
+const Connection = require("./db/conn");
+const passport = require("passport");
 
-
-const Connection = require("./db/conn")
-const app = express();
 
 
 //Give Access to .env file via 'process.env.VARIABLE_NAME'
 dotenv.config();
 
+// create express application 
+const app = express();
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 
 const port = process.env.PORT || 5000;
 
@@ -49,13 +52,25 @@ app.use(session({
 
 /// Storing Cookie For Session End  ///
 
+///todo
+// ***-------- PASSPORT AUTHENTICATION ---------***///
+require('./config/passport') 
 
+app.use(passport.initialize());
 
+app.use(passport.session());
 
+app.use((req,res,next)=>{
+    console.log(req.session);
+    console.log(req.user);
+    next();  
+})
 
 // Imports all of the routes from ./routes/routes.js
 app.use(routes);
 
+
+//---------------SERVER---------------///
 
 app.listen(port, () => {
     console.log(`Server is Running on Port ${port}`);
