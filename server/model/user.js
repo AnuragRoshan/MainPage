@@ -1,7 +1,10 @@
 const mongoose=require("mongoose")
 
 const UserSchema = new mongoose.Schema({
-    username:{
+    name:{
+         type:String,
+    },
+    email:{
         type:String,
     },
     
@@ -20,5 +23,4 @@ const UserSchema = new mongoose.Schema({
 
 const User=mongoose.model('User',UserSchema)
 
-// export default user;
 module.exports=User;

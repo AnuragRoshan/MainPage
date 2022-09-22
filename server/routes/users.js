@@ -2,37 +2,67 @@ const router = require('express').Router();
 const passport = require('passport')
 const genPassword = require('../lib/passwordUtils').genPassword
 const connection = require('../db/conn')
-const user = require('../model/user');
+const User = require('../model/user');
 const { isAuth, isAdmin } = require('./authMiddleware');
-
+var validator = require("email-validator");
 
 
 ///POST ROUTES///
 // TODO
-router.post('/login', passport.authenticate('local',{failureRedirect:"/login-failure",successRedirect:'/login-success'}));
+router.post('/login', passport.authenticate('local', { failureRedirect: "/login-failure", successRedirect: '/admin-route' }));
 
 
 // TODO
-router.post('/register', (req, res, next) => {
-    const saltHash = genPassword(req.body.password);
+router.post('/register', async (req, res, next) => {
+    try {
+        const saltHash = genPassword(req.body.password);
+        const name = req.body.name;
+        const salt = saltHash.salt;
+        const hash = saltHash.hash;
+        const email = req.body.email
+        // const User=require("../model/user")
 
-    const salt = saltHash.salt;
-    const hash = saltHash.hash;
+        // is email is Valid or not
+        const emailCheck = validator.validate(email);
 
-    const newUser = new user({
-        username: req.body.username,
-        hash: hash,
-        salt: salt,
-        admin:true
-    })
+        if (emailCheck == false) {
+            return res.status(202).json({ msg: "Invalid Email Id" })
+        }
 
-    newUser.save()
-        .then((user) => {
-            console.log(user);
-            // res.send(user)
-        })
 
-    res.redirect('/login');
+
+        // check for duplicate email
+
+        user = await User.findOne({ email: email });
+
+        if (user) {
+            
+            // if duplicate email found 
+
+            res.status(200).json({ msg: "User With Same Email Already Exist" })
+
+        }
+        //if duplicate email id not found create new user
+        else {
+            const newUser = new User({
+                name: name,
+                email: req.body.email,
+                hash: hash,
+                salt: salt,
+                admin: false
+            })
+
+            newUser.save()
+                .then((newUser) => {
+                    console.log(newUser);
+                })
+
+            // res.redirect('/login');
+            return res.status(200).json({ msg: "Registered Succesfully" })
+        }
+    } catch (error) {
+        res.status(500).json({ msg: "Error while Registering" })
+    }
 
 });
 
@@ -75,21 +105,21 @@ router.get('/register', (req, res, next) => {
  * 
  * Also, look up what behaviour express session has without a maxage set
  */
-router.get('/protected-route', isAuth,(req, res, next) => {
+router.get('/protected-route', isAuth, (req, res, next) => {
     res.send("You did it")
 });
-router.get('/admin-route', isAdmin,(req, res, next) => {
+router.get('/admin-route', isAdmin, (req, res, next) => {
     res.send("You did it Mr Admin")
-   
+
 });
 
 // Visiting this route logs the user out
 router.get('/logout', (req, res, next) => {
-    req.logout(function(err) {
+    req.logout(function (err) {
         if (err) { return next(err); }
         res.redirect('/protected-route');
-      });
-   
+    });
+
 });
 
 router.get('/login-success', (req, res, next) => {

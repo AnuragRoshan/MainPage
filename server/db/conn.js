@@ -1,16 +1,18 @@
 const mongoose = require("mongoose")
 
+require("dotenv").config();
 
-const Connection = (DB_URL) => {
-    const URL = DB_URL;
+const URL = process.env.DB_URL
     try {
+    
         mongoose.connect(URL, {
             useNewUrlParser: true
         });
+    
         console.log("Connected To Database");
-    } catch (error) {
-        console.log("error while loadind the data base", error);
-    }
-}
+    
+    } catch ( error ) {
 
-module.exports=Connection ;
+        console.log("error while loadind the data base", error);
+    
+    }
