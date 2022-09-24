@@ -6,13 +6,12 @@ import './App.css';
 
 function App() {
   const useStyles = makeStyles(() => ({
-
-
+    
   }))
   const classes = useStyles();
   return (
-    <BrowserRouter>
-      <div className={classes.App}>
+    <BrowserRouter >
+      <div>
         <Navbar />
 
         <Routes>
