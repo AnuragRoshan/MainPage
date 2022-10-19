@@ -1,4 +1,4 @@
-const router = require('express').Router();
+    const router = require('express').Router();
 const passport = require('passport')
 const genPassword = require('../lib/passwordUtils').genPassword
 const connection = require('../db/conn')
@@ -9,14 +9,14 @@ var validator = require("email-validator");
 
 ///POST ROUTES///
 // TODO
-router.post('/login', passport.authenticate('local', { failureRedirect: "/login-failure", successRedirect: '/admin-route' }));
+router.post('/login', passport.authenticate('local', { failureRedirect: "/login-failure", successRedirect: '/login-success' }));
 
 
 // TODO
 router.post('/register', async (req, res, next) => {
     try {
         const saltHash = genPassword(req.body.password);
-        const name = req.body.name;
+        const name = req.body.username;
         const salt = saltHash.salt;
         const hash = saltHash.hash;
         const email = req.body.email
@@ -39,17 +39,17 @@ router.post('/register', async (req, res, next) => {
             
             // if duplicate email found 
 
-            res.status(200).json({ msg: "User With Same Email Already Exist" })
+            res.status(202).json({ msg: "User With Same Email Already Exist" })
 
         }
         //if duplicate email id not found create new user
         else {
             const newUser = new User({
                 name: name,
-                email: req.body.email,
+                email: email,
                 hash: hash,
                 salt: salt,
-                admin: false
+                admin: true
             })
 
             newUser.save()
@@ -57,7 +57,8 @@ router.post('/register', async (req, res, next) => {
                     console.log(newUser);
                 })
 
-            // res.redirect('/login');
+            // res.redirect('http://localhost:3000/');
+
             return res.status(200).json({ msg: "Registered Succesfully" })
         }
     } catch (error) {
@@ -89,6 +90,7 @@ router.get('/register', (req, res, next) => {
 
     const form = '<h1>Register Page</h1><form method="post" action="register">\
                     Enter Username:<br><input type="text" name="username">\
+                    <br>Enter email:<br><input type="text" name="email">\
                     <br>Enter Password:<br><input type="password" name="password">\
                     <br><br><input type="submit" value="Submit"></form>';
 
@@ -117,19 +119,22 @@ router.get('/admin-route', isAdmin, (req, res, next) => {
 router.get('/logout', (req, res, next) => {
     req.logout(function (err) {
         if (err) { return next(err); }
-        res.redirect('/protected-route');
+        res.redirect('/login');
     });
 
 });
 
 router.get('/login-success', (req, res, next) => {
-    const name = req.user.username;
-    console.log(name);
-    res.send(`<p>Hey ${name} you are successfully logged in. --> <a href="/protected-route">Go to protected route</a></p>`);
+    // const name = req.user.username;
+    // console.log(name);
+    // res.send(`<p>Hey ${name} you are successfully logged in. --> <a href="/protected-route">Go to protected route</a></p>`);
+    
+    return res.status(200).json({ msg: " Logged In SuccesFully" })
 });
 
 router.get('/login-failure', (req, res, next) => {
-    res.send('You entered the wrong password.');
+    
+    return res.status(202).json({ msg: "Failed To Login" })
 });
 
 

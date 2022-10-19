@@ -24,8 +24,14 @@ app.use(express.urlencoded({extended: true}));
 
 const port = process.env.PORT || 5000;
 
-// Allows our Angular application to make HTTP requests to Express application
-app.use(cors());
+// Allows our  application to make HTTP requests to Express application
+app.use(
+    cors({
+      origin: "http://localhost:3000",
+      methods: "GET,POST,PUT,DELETE",
+      credentials: true,
+    })
+    );
 
 
 //data base connection
