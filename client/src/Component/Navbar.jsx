@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React  from "react";
 import AppBar from "@material-ui/core/AppBar";
 import {
   Box,
@@ -11,15 +11,15 @@ import {
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
 import { Modal } from "@material-ui/core";
-import { borderRadius } from "@mui/system";
 import LoginModal from "./LoginModal";
 import RegisterModal from "./RegisterModal";
-
+import { useDispatch, useSelector } from "react-redux";
+import { actions } from "../Store/navbarState";
 const useStyles = makeStyles({
   btn: {
     backgroundColor: "#FFB200",
     transition:"200ms",
-    color: "#FFF4CF",
+    color: "black",
     "&:hover": {
       backgroundColor: "#FFF4CF",
       color: "#277BC0",
@@ -59,16 +59,26 @@ const useStyles = makeStyles({
     paddingInline:"0.4rem",color:"inherit"
   }
 });
-const Navbar = () => {
+const Navbar = ({user}) => {
   const classes = useStyles();
+  const dispatch=useDispatch();
+  const open=useSelector((state)=>state.open);
 
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleOpen=()=>{
+    dispatch(actions.handleOpen(true));
+  }
 
-  const [isLogin, setIsLogin] = useState(true);
-  const LoginTrue = () => setIsLogin(true);
-  const LoginFalse = () => setIsLogin(false);
+
+  const isLogin=useSelector((state)=>state.isLogin);
+
+  const LoginTrue=()=>{
+    dispatch(actions.LoginTrue(true));
+  }
+  const LoginFalse=()=>{
+    dispatch(actions.LoginFalse(false));
+  }
+
+
 
 
 
@@ -79,7 +89,6 @@ const Navbar = () => {
           boxShadow: " 0 2px 4px 0 rgba(0,0,0,.2)",
           backgroundColor: "#FFF4CF",
           position: "fixed",
-          padding: "0.5rem",
         }}
       >
         <Toolbar style={{ marginInline: "4rem" }}>
@@ -112,7 +121,7 @@ const Navbar = () => {
             </a>
           </Grid>
           <Grid>
-            <Button
+            {/* <Button
               style={{ padding: "0", marginLeft: "1px", textTransform: "none" }}
               onClick={handleOpen}
             >
@@ -121,18 +130,58 @@ const Navbar = () => {
                 className={classes.btn}
                 style={{
                   borderRadius: "4px",
-                  width: "110px",
+                  width: "130px",
                   padding: "0.4rem",
                   fontFamily: "Montserrat",
-                  fontWeight: "bolder",
+                  fontWeight: "bold",
                 }}
               >
-                Login
+                Login/Register
+              </Typography>
+            </Button> */}
+            {user?(<>
+              <Button
+              style={{ padding: "0", marginLeft: "1px", textTransform: "none" }}
+              onClick={handleOpen}
+            >
+              {" "}
+              <Typography
+                className={classes.btn}
+                style={{
+                  borderRadius: "4px",
+                  width: "130px",
+                  padding: "0.4rem",
+                  fontFamily: "Montserrat",
+                  fontWeight: "bold",
+                }}
+              >
+                Logout
               </Typography>
             </Button>
+            
+            </>):(<>
+              <Button
+              style={{ padding: "0", marginLeft: "1px", textTransform: "none" }}
+              onClick={handleOpen}
+            >
+              {" "}
+              <Typography
+                className={classes.btn}
+                style={{
+                  borderRadius: "4px",
+                  width: "130px",
+                  padding: "0.4rem",
+                  fontFamily: "Montserrat",
+                  fontWeight: "bold",
+                }}
+              >
+                Login/Register
+              </Typography>
+            </Button>
+            </>)}
             <Modal
               open={open}
-                onClose={handleClose}
+                // onClose={handleClose}
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
             >

@@ -1,9 +1,13 @@
 import { Box, Button, makeStyles, TextField } from "@material-ui/core";
-import React from "react";
-
+import React, { useState } from "react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import KeySharpIcon from "@mui/icons-material/KeySharp";
-import MarkunreadSharpIcon from '@mui/icons-material/MarkunreadSharp';
+import MarkunreadSharpIcon from "@mui/icons-material/MarkunreadSharp";
+import { useDispatch, useSelector } from "react-redux";
+import { actions } from "../Store/navbarState";
 
 const useStyles = makeStyles({
   authBtn: {
@@ -19,6 +23,71 @@ const useStyles = makeStyles({
 
 const LoginModal = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const open = useSelector((state) => state.open);
+
+  const handleClose = () => {
+    dispatch(actions.handleOpen(false));
+  };
+
+  const isLogin = useSelector((state) => state.isLogin);
+
+  const LoginTrue = () => {
+    dispatch(actions.LoginTrue(true));
+  };
+  const LoginFalse = () => {
+    dispatch(actions.LoginFalse(false));
+  };
+
+  const initialValues = {
+    username: "",
+    password: "",
+  };
+  const [user, setUser] = useState({ initialValues });
+
+  const handleInputs = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+    console.log(user);
+  };
+
+  const submitForm = async () => {
+    // alert("Submitted")
+    await axios.post(`http://localhost:5000/login`, user).then((response) => {
+      var message = response.data.msg;
+      var status = response.status;
+      console.log(message);
+      console.log(status);
+      if (status === 200) {
+        toast.success(`${message}`, {
+          position: "top-center",
+          autoClose: 2000,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: true,
+          textAlign: "center",
+        });
+        // window.location.reload();
+      } else if (status === 202) {
+        toast.warn(`${message}`, {
+          position: "top-center",
+          autoClose: 2000,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: true,
+          textAlign: "center",
+        });
+      } else if (status === 500) {
+        toast.warn(`${message}`, {
+          position: "top-center",
+          autoClose: 2000,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: true,
+          textAlign: "center",
+        });
+      }
+    });
+  };
 
   return (
     <Box
@@ -34,13 +103,13 @@ const LoginModal = () => {
           }}
         />
         <TextField
-          //   onChange={(e) => handleInputs(e)}
+          onChange={(e) => handleInputs(e)}
           label={"Email"}
           type={"email"}
           style={{
             width: "100%",
           }}
-          name="name"
+          name="username"
           autoComplete="on"
         ></TextField>
       </Box>
@@ -60,13 +129,13 @@ const LoginModal = () => {
           }}
         />
         <TextField
-          //   onChange={(e) => handleInputs(e)}
+          onChange={(e) => handleInputs(e)}
           label={"Password"}
           type={"password"}
           style={{
             width: "100%",
           }}
-          name="name"
+          name="password"
           autoComplete="on"
         ></TextField>
       </Box>
@@ -79,14 +148,22 @@ const LoginModal = () => {
       >
         <Button
           className={classes.authBtn}
-          style={{ padding: "0.3rem", width: "140px", fontWeight: "bolder",
-          backgroundColor: "#277BC0",
-          color: "inherit",
-          fontFamily: "Montserrat", }}
+          style={{
+            padding: "0.3rem",
+            width: "140px",
+            fontWeight: "bolder",
+            backgroundColor: "#277BC0",
+            color: "inherit",
+            fontFamily: "Montserrat",
+          }}
+          onClick={() => submitForm()}
         >
-          Log in    
-          
+          Log in
         </Button>
+        
+        <ToastContainer
+            className={classes.toastifyCss}
+          />
       </Box>
       <Box style={{ paddingBlockStart: "1.5rem", fontSize: "0.95rem" }}>
         Not a member ?{" "}
@@ -97,6 +174,7 @@ const LoginModal = () => {
             pointerEvents: "",
             color: "#277BC0",
           }}
+          onClick={LoginFalse}
         >
           Register
         </a>
@@ -127,6 +205,7 @@ const LoginModal = () => {
               color: "inherit",
               fontFamily: "Montserrat",
             }}
+            onClick={handleClose}
           >
             Close
           </Button>

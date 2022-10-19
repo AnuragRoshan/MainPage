@@ -1,9 +1,14 @@
 import { Box, Button, makeStyles, TextField } from "@material-ui/core";
-import React from "react";
-
+import React, { useState } from "react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import KeySharpIcon from "@mui/icons-material/KeySharp";
 import MarkunreadSharpIcon from "@mui/icons-material/MarkunreadSharp";
+import { actions } from "../Store/navbarState";
+import { useDispatch, useSelector } from "react-redux";
+import Redirect, { Link } from "react-router-dom"
 
 const useStyles = makeStyles({
   authBtn: {
@@ -16,6 +21,83 @@ const useStyles = makeStyles({
 
 const RegisterModal = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const open = useSelector((state) => state.open);
+
+  const handleOpen = () => {
+    dispatch(actions.handleOpen(true));
+  };
+  const handleClose = () => {
+    dispatch(actions.handleOpen(false));
+  };
+
+  const isLogin = useSelector((state) => state.isLogin);
+
+  const LoginTrue = () => {
+    dispatch(actions.LoginTrue(true));
+  };
+  const LoginFalse = () => {
+    dispatch(actions.LoginFalse(false));
+  };
+
+  //Regsitering to Data Base
+
+  const initialValues = {
+    username: "",
+    email: "",
+    password: "",
+  };
+  const [user, setUser] = useState({ initialValues });
+
+  const handleInputs = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+    console.log(user);
+  };
+
+  const submitForm = async () => {
+    // alert("Submitted")
+    await axios
+      .post(`http://localhost:5000/register`, user)
+      .then((response) => {
+        var message = response.data.msg;
+        var status = response.status;
+        // console.log(message);
+        // console.log(status);
+        if (status === 200) {
+          toast.success(`${message}`, {
+            position: "top-center",
+            autoClose: 2000,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: true,
+            textAlign: "center",
+          }
+          );
+          // window.location.reload();
+        } else if ((status === 202)) {
+          toast.warn(`${message}`, {
+            position: "top-center",
+            autoClose: 2000,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: true,
+            textAlign: "center",
+          });
+        }
+        else if ((status === 500)) {
+          toast.warn(`${message}`, {
+            position: "top-center",
+            autoClose: 2000,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: true,
+            textAlign: "center",
+          });
+        }
+      });
+  };
+
+//Regsitering To Data Base end
 
   return (
     <Box
@@ -31,13 +113,13 @@ const RegisterModal = () => {
           }}
         />
         <TextField
-          //   onChange={(e) => handleInputs(e)}
+          onChange={(e) => handleInputs(e)}
           label={"Name"}
           type={"text"}
           style={{
             width: "100%",
           }}
-          name="name"
+          name="username"
           autoComplete="on"
         ></TextField>
       </Box>
@@ -57,13 +139,13 @@ const RegisterModal = () => {
           }}
         />
         <TextField
-          //   onChange={(e) => handleInputs(e)}
+          onChange={(e) => handleInputs(e)}
           label={"Email"}
           type={"email"}
           style={{
             width: "100%",
           }}
-          name="name"
+          name="email"
           autoComplete="on"
         ></TextField>
       </Box>
@@ -83,13 +165,13 @@ const RegisterModal = () => {
           }}
         />
         <TextField
-          //   onChange={(e) => handleInputs(e)}
+          onChange={(e) => handleInputs(e)}
           label={"Password"}
           type={"password"}
           style={{
             width: "100%",
           }}
-          name="name"
+          name="password"
           autoComplete="on"
         ></TextField>
       </Box>
@@ -110,9 +192,13 @@ const RegisterModal = () => {
             color: "inherit",
             fontFamily: "Montserrat",
           }}
+          onClick={() => submitForm()}
         >
           Register
         </Button>
+          <ToastContainer
+            className={classes.toastifyCss}
+          />
       </Box>
 
       <Box
@@ -131,6 +217,7 @@ const RegisterModal = () => {
               pointerEvents: "",
               color: "#277BC0",
             }}
+            onClick={LoginTrue}
           >
             Login
           </a>
@@ -147,6 +234,7 @@ const RegisterModal = () => {
               width: "100px",
               fontWeight: "bolder",
             }}
+            onClick={handleClose}
           >
             Close
           </Button>
