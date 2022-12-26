@@ -8,7 +8,7 @@ import KeySharpIcon from "@mui/icons-material/KeySharp";
 import MarkunreadSharpIcon from "@mui/icons-material/MarkunreadSharp";
 import { actions } from "../Store/navbarState";
 import { useDispatch, useSelector } from "react-redux";
-import Redirect, { Link } from "react-router-dom"
+import Redirect, { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
   authBtn: {
@@ -43,8 +43,8 @@ const RegisterModal = () => {
   //Regsitering to Data Base
 
   const initialValues = {
+    name: "",
     username: "",
-    email: "",
     password: "",
   };
   const [user, setUser] = useState({ initialValues });
@@ -56,48 +56,17 @@ const RegisterModal = () => {
 
   const submitForm = async () => {
     // alert("Submitted")
-    await axios
-      .post(`http://localhost:5000/register`, user)
-      .then((response) => {
-        var message = response.data.msg;
-        var status = response.status;
-        // console.log(message);
-        // console.log(status);
-        if (status === 200) {
-          toast.success(`${message}`, {
-            position: "top-center",
-            autoClose: 2000,
-            pauseOnHover: false,
-            pauseOnFocusLoss: false,
-            draggable: true,
-            textAlign: "center",
-          }
-          );
-          // window.location.reload();
-        } else if ((status === 202)) {
-          toast.warn(`${message}`, {
-            position: "top-center",
-            autoClose: 2000,
-            pauseOnHover: false,
-            pauseOnFocusLoss: false,
-            draggable: true,
-            textAlign: "center",
-          });
-        }
-        else if ((status === 500)) {
-          toast.warn(`${message}`, {
-            position: "top-center",
-            autoClose: 2000,
-            pauseOnHover: false,
-            pauseOnFocusLoss: false,
-            draggable: true,
-            textAlign: "center",
-          });
-        }
-      });
+    axios({
+      method: "POST",
+      data: {
+        user,
+      },
+      withCredentials: true,
+      url: "http://localhost:5000/register",
+    }).then((res) => console.log(res));
   };
 
-//Regsitering To Data Base end
+  //Regsitering To Data Base end
 
   return (
     <Box
@@ -145,7 +114,7 @@ const RegisterModal = () => {
           style={{
             width: "100%",
           }}
-          name="email"
+          name="username"
           autoComplete="on"
         ></TextField>
       </Box>
@@ -196,9 +165,7 @@ const RegisterModal = () => {
         >
           Register
         </Button>
-          <ToastContainer
-            className={classes.toastifyCss}
-          />
+        <ToastContainer className={classes.toastifyCss} />
       </Box>
 
       <Box

@@ -1,41 +1,30 @@
-const express = require("express")
-const dotenv = require("dotenv")
-const session = require("express-session");
-const MongoStore = require('connect-mongo');
-const routes = require("./routes/index")
+const express = require("express");
+const cors = require("cors");
 const passport = require("passport");
-const cors=require("cors")
+const routes = require("./routes/index")
+const dotenv = require("dotenv")
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const bodyParser = require("body-parser");
+const app = express();
+const User = require("./model/user");
+//----------------------------------------- END OF IMPORTS---------------------------------------------------
 
-
-// ************Genreal Setup**************
-
-//Give Access to .env file via 'process.env.VARIABLE_NAME'
 dotenv.config();
 
-// create express application 
-const app = express();
 
-
-
-// Instead of using body-parser middleware, use the new Express implementation of the same thing
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-
-
-const port = process.env.PORT || 5000;
-
-// Allows our  application to make HTTP requests to Express application
 app.use(
-    cors({
-      origin: "http://localhost:3000",
-      methods: "GET,POST,PUT,DELETE",
-      credentials: true,
-    })
-    );
+  cors({
+    origin: "http://localhost:3000", // <-- location of the react app were connecting to
+    credentials: true,
+  })
+);
 
-
-//data base connection
-require("./db/conn");
+//database connection
+require("./db/conn.js");
 
 //data base connection end
 
@@ -43,52 +32,30 @@ require("./db/conn");
 require('./model/user');
 
 
-
-// / Storing Cookie For Session  ///
-
-// session store in mongoDB
-
-const DB_URL = process.env.DB_URL
-let store = MongoStore.create({
-    mongoUrl: DB_URL,
-    collectionName: "sessions"
-});
-
-// session Config
-const secret = process.env.SESSION_SECRET
-app.use(session({
-    secret: secret,
-    resave: false,
+app.use(
+  session({
+    secret: "secretcode",
+    resave: true,
     saveUninitialized: true,
-    store: store,
-    cookie: {
-        maxAge: 1000 * 60 * 60 * 24  //equals 1 day
-    }
-
-}))
-
-// / Storing Cookie For Session End  ///
-
-///todo
-// ***-------- PASSPORT AUTHENTICATION ---------***///
-require('./config/passport') 
-
+  })
+);
+app.use(cookieParser("secretcode"));
 app.use(passport.initialize());
-
 app.use(passport.session());
+require("./config/passportConfig")(passport);
 
-app.use((req,res,next)=>{
-    console.log(req.session);
-    console.log(req.user);
-    next();  
-})
+//----------------------------------------- END OF MIDDLEWARE---------------------------------------------------
 
-// Imports all of the routes from ./routes/routes.js
+// Routes
+
 app.use(routes);
 
 
-//---------------SERVER---------------///
+//----------------------------------------- END OF ROUTES---------------------------------------------------
+//Start Server
 
-app.listen(port, () => {
-    console.log(`Server is Running on Port ${port}`);
+const PORT = process.env.PORT || 6000;
+
+app.listen(PORT, () => {
+  console.log(`SERVER IS RUNNIG ON PORT ${PORT}`);
 });
