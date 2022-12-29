@@ -16,7 +16,7 @@ const SearchBar = () => {
           style={{ fontFamily: "Montserrat", fontWeight: "bolder" }}
           variant="h4"
         >
-          Search What You Want To Learn?
+          kjwhd wodjoqwd oiwjd wqidjqw dj
         </Typography>
       </Box>
       <Box style={{ display: "flex", flexDirection: "row" }}>

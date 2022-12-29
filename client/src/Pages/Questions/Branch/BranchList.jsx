@@ -1,23 +1,26 @@
 import { Box } from "@material-ui/core";
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 const BranchList = () => {
-  const data = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Victor Wayne" },
-    { id: 3, name: "Jane Doe" },
-    { id: 3, name: "Jane Doe" },
-    { id: 3, name: "Jane Doe" },
-    { id: 3, name: "Jane Doe" },
-    { id: 3, name: "Jane Doe" },
-    { id: 3, name: "Jane Doe" },
-  ];
+  const [branchList, setbranchList] = useState([]);
+  useEffect(() => {
+    const getBranchList = async () => {
+      const { data } = await axios.get("http://localhost:5000/getBranch");
+      setbranchList(data);
+    };
+    getBranchList();
+  }, []);
+
   return (
     <Box>
-      {data.map((u) => (
-        <Box>
-          <Box>{u.name}</Box>
-          <Box>{u.id}</Box>
+      {branchList.map((u) => (
+        <Box style={{ margin: "2rem" }}>
+          <Box>{u.branch}</Box>
+          <a href="">
+            {u.subject.map((k) => {
+              return <Box>{k.subjectName}</Box>;
+            })}
+          </a>
         </Box>
       ))}
     </Box>
