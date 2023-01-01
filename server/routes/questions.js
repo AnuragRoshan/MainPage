@@ -27,15 +27,16 @@ router.post("/addBranch", (req, res) => {
 });
 
 // GET REQUEST
-router.get("/getBranch", (req, res) => {
-  Questions.find((error, data) => {
-    if (error) {
-      res.json({ ok: "error" })
-      return next(error)
-    } else {
-      res.json(data)
-    }
-  })
+router.get("/getBranch/", (req, res) => {
+  Questions.find(
+    (error, data) => {
+      if (error) {
+        res.json({ ok: "error" })
+        return next(error)
+      } else {
+        res.json(data)
+      }
+    })
 })
 
 
@@ -43,10 +44,14 @@ router.get("/getBranch", (req, res) => {
 // NOTE
 //   use req.params to get url 
 // main updation done just handle error now
-router.post("/addSubject", (req, res) => {
-  var objFriends = { subjectName: "CSE22", subjectCode: "CSE2CODE2", article: "CSE2Article2" };
+router.post("/addSubject/:branch", (req, res) => {
+  var subjectName = req.body.subjectName;
+  var subjectCode = req.body.subjectCode;
+  console.log(subjectName);
+  var article = req.body.article;
+  var objFriends = { subjectName: subjectName, subjectCode: subjectCode, article: article };
   Questions.findOneAndUpdate(
-    { branch: "CSE2" },
+    { branch: req.params.branch },
     { $push: { subject: objFriends } },
     function (error, success) {
       if (error) {
@@ -58,12 +63,29 @@ router.post("/addSubject", (req, res) => {
     });
 });
 
+// GET REQUEST
+router.get("/getBranch/:branch/:subject", (req, res) => {
+
+  // console.log(branch);
+  Questions.find({ branch: req.params.branch, "subject.subjectName": req.params.subject },
+    { branch: req.params.branch, "subject.$": 1, },
+    (error, data) => {
+      if (error) {
+        res.json({ ok: "error" })
+        return next(error)
+      } else {
+        res.json(data)
+      }
+    })
+})
+
+
 
 router.post("/addTopic", (req, res) => {
-  var objFriends = { topicName: "topic13", topicCode: "topic23", article: "topic33" };
+  var objFriends = { topicName: "CSE212", topicCode: "topiccse212", article: "topic33" };
 
   Questions.findOneAndUpdate(
-    { branch: "CSE" },
+    { branch: "CSE2" },
     {
       $push: {
         'subject.$[el].topics': objFriends,
@@ -71,7 +93,7 @@ router.post("/addTopic", (req, res) => {
     },
     {
       arrayFilters: [{
-        "el.subjectName": "fname3",
+        "el.subjectName": "CSE21",
 
       }]
     },
