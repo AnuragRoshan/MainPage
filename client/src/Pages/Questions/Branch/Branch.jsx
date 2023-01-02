@@ -7,7 +7,7 @@ const Branch = () => {
   return (
     <div style={{ marginInline: "40px", marginBlockStart: "110px" }}>
       <AddBranch />
-      <SearchBar />
+      {/* <SearchBar /> */}
       <BranchList />
     </div>
   );

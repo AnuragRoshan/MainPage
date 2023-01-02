@@ -1,10 +1,13 @@
 import React from "react";
-// import AddSubject from "./AddSubject";
-import SubjectList from "./SubjectList";
+import { useParams } from "react-router-dom";
+import AddTopic from "./AddTopic";
+import TopicList from "./TopicList";
 const Topic = () => {
+  const { subjectParams, branchParams } = useParams();
   return (
     <div style={{ marginInline: "40px", marginBlockStart: "110px" }}>
-      <AddTopic />
+      <AddTopic branch={branchParams} subject={subjectParams} />
+      <TopicList />
     </div>
   );
 };

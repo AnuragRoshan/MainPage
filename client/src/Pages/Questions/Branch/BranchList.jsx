@@ -2,7 +2,7 @@ import { Box } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import AddSubject from "../Subject/AddSubject";
+import AddSubject from "./AddSubject";
 
 const BranchList = () => {
   const [branchList, setbranchList] = useState([]);
@@ -10,7 +10,7 @@ const BranchList = () => {
     const getBranchList = async () => {
       const { data } = await axios.get("http://localhost:5000/getBranch");
       setbranchList(data);
-      // console.log(data.branch);
+      console.log(data);
     };
     // console.log(branchList);
     getBranchList();

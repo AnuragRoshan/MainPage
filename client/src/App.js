@@ -3,8 +3,8 @@ import React from "react";
 import { BrowserRouter, Navigate, Route, Routes, } from 'react-router-dom';
 import Navbar from "./Component/Navbar";
 import './App.css';
-import Branch from "./Pages/Questions/Branch/Branch"
-import Subject from "./Pages/Questions/Subject/Subject";
+import Branch from "./Pages/Questions/Branch/Branch";
+import Topic from "./Pages/Questions/Topic/Topic";
 
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
 
         <Routes>
           < Route exact path="/questions" element={<Branch />} />
-          <Route exact path="/questions/:branchParams/:subjectParams" element={<Subject />} />
+          <Route exact path="/questions/:branchParams/:subjectParams" element={<Topic />} />
 
         </Routes>
         {/* <Footer className={classes.footer} user={user} /> */}

@@ -47,7 +47,7 @@ router.get("/getBranch/", (req, res) => {
 router.post("/addSubject/:branch", (req, res) => {
   var subjectName = req.body.subjectName;
   var subjectCode = req.body.subjectCode;
-  console.log(subjectName);
+  // console.log(subjectName);
   var article = req.body.article;
   var objFriends = { subjectName: subjectName, subjectCode: subjectCode, article: article };
   Questions.findOneAndUpdate(
@@ -68,7 +68,7 @@ router.get("/getBranch/:branch/:subject", (req, res) => {
 
   // console.log(branch);
   Questions.find({ branch: req.params.branch, "subject.subjectName": req.params.subject },
-    { branch: req.params.branch, "subject.$": 1, },
+    { "subject.$": 1 },
     (error, data) => {
       if (error) {
         res.json({ ok: "error" })
@@ -83,7 +83,7 @@ router.get("/getBranch/:branch/:subject", (req, res) => {
 
 router.post("/addTopic", (req, res) => {
 
-  // console.log(req.body.initialValues.branch);
+  // console.log(req.body.branch);
   var branch = req.body.initialValues.branch;
   var subject = req.body.initialValues.subject;
   var topicName = req.body.topicName;
@@ -118,10 +118,17 @@ router.post("/addTopic", (req, res) => {
 
 });
 router.post("/addSubTopic", (req, res) => {
-  var objFriends = { SubTopicName: "Subtopic13", SubTopicCode: "Subtopic23", article: "Subtopic33" };
+  console.log(req.body);
+  const SubTopicName = req.body.SubTopicName;
+  const SubTopicCode = req.body.SubTopicCode;
+  const article = req.body.article;
+  const branch = req.body.initialValues.branch;
+  const subject = req.body.initialValues.subject;
+  const topic = req.body.initialValues.topic;
+  var objFriends = { SubTopicName: SubTopicName, SubTopicCode: SubTopicCode, article: article };
 
   Questions.findOneAndUpdate(
-    { branch: "CSE" },
+    { branch: branch },
     {
       $push: {
         'subject.$[el].topics.$[em].subTopics': objFriends,
@@ -129,10 +136,10 @@ router.post("/addSubTopic", (req, res) => {
     },
     {
       arrayFilters: [{
-        "el.subjectName": "fname3",
+        "el.subjectName": subject,
 
       }, {
-        "em.topicName": "topic13"
+        "em.topicName": topic
       }]
     },
 

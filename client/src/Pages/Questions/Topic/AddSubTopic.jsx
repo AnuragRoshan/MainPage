@@ -4,25 +4,27 @@ import AddBoxRoundedIcon from "@mui/icons-material/AddBoxRounded";
 import { useParams } from "react-router-dom";
 
 import axios from "axios";
-const AddTopic = (props) => {
+const AddSubTopic = (props) => {
   // const { branchParams } = useParams();
   const initialValues = {
-    topicName: "",
-    topicCode: "",
+    SubTopicName: "",
+    SubTopicCode: "",
     article: "",
     branch: `${props.branch}`,
     subject: `${props.subject}`,
+    topic: `${props.topic}`,
   };
-  const [topic, setTopic] = useState({ initialValues });
+  const [subTopic, setSubTopic] = useState({ initialValues });
 
   const handleInputs = (e) => {
-    setTopic({ ...topic, [e.target.name]: e.target.value });
+    setSubTopic({ ...subTopic, [e.target.name]: e.target.value });
+    // console.log(subTopic);
   };
 
   const submitForm = async () => {
     // alert("Submitted")
-    await axios.post(`http://localhost:5000/addTopic`, topic);
-    // console.log(topic);
+    await axios.post(`http://localhost:5000/addSubTopic`, subTopic);
+
     window.location.reload(false);
   };
   return (
@@ -37,30 +39,28 @@ const AddTopic = (props) => {
         marginRight: "auto",
       }}
     >
-      {/* {props.branch}
-      {props.subject} */}
       <Box>
         <TextField
           onChange={(e) => handleInputs(e)}
-          label={"Topic Name"}
+          label={"Subtopic Name"}
           type={"text"}
           style={{
             width: "100%",
           }}
-          name="topicName"
+          name="SubTopicName"
           autoComplete="off"
         ></TextField>
       </Box>
       <Box>
         <TextField
           onChange={(e) => handleInputs(e)}
-          label={"Topic Code"}
+          label={"Subtopic Code"}
           type={"text"}
           style={{
             width: "100%",
             marginBlockStart: "1rem",
           }}
-          name="topicCode"
+          name="SubTopicCode"
           autoComplete="off"
         ></TextField>
       </Box>
@@ -94,4 +94,4 @@ const AddTopic = (props) => {
   );
 };
 
-export default AddTopic;
+export default AddSubTopic;
