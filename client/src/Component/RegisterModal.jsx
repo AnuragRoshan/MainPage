@@ -1,14 +1,14 @@
 import { Box, Button, makeStyles, TextField } from "@material-ui/core";
 import React, { useState } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import KeySharpIcon from "@mui/icons-material/KeySharp";
 import MarkunreadSharpIcon from "@mui/icons-material/MarkunreadSharp";
 import { actions } from "../Store/navbarState";
 import { useDispatch, useSelector } from "react-redux";
-import Redirect, { Link } from "react-router-dom";
+// import Redirect, { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
   authBtn: {
@@ -22,16 +22,16 @@ const useStyles = makeStyles({
 const RegisterModal = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const open = useSelector((state) => state.open);
+  // const open = useSelector((state) => state.open);
 
-  const handleOpen = () => {
-    dispatch(actions.handleOpen(true));
-  };
+  // const handleOpen = () => {
+  //   dispatch(actions.handleOpen(true));
+  // };
   const handleClose = () => {
     dispatch(actions.handleOpen(false));
   };
 
-  const isLogin = useSelector((state) => state.isLogin);
+  // const isLogin = useSelector((state) => state.isLogin);
 
   const LoginTrue = () => {
     dispatch(actions.LoginTrue(true));

@@ -4,25 +4,26 @@ import AddBoxRoundedIcon from "@mui/icons-material/AddBoxRounded";
 import { useParams } from "react-router-dom";
 
 import axios from "axios";
-const AddBranch = (props) => {
+const AddTopic = (props) => {
   // const { branchParams } = useParams();
   const initialValues = {
-    subjectName: "",
-    subjectCode: "",
+    topicName: "",
+    topicCode: "",
     article: "",
+    branch: `${props.branch}`,
+    subject: `${props.subject}`,
   };
-  const [subject, setSubject] = useState({ initialValues });
+  const [topic, setTopic] = useState({ initialValues });
 
   const handleInputs = (e) => {
-    setSubject({ ...subject, [e.target.name]: e.target.value });
-    console.log(subject);
+    setTopic({ ...topic, [e.target.name]: e.target.value });
   };
 
   const submitForm = async () => {
     // alert("Submitted")
-    await axios.post(`http://localhost:5000/addSubject/${props.data}`, subject);
-
-    window.location.reload(false);
+    await axios.post(`http://localhost:5000/addTopic`, topic);
+    console.log(topic);
+    // window.location.reload(false);
   };
   return (
     <Box
@@ -36,28 +37,30 @@ const AddBranch = (props) => {
         marginRight: "auto",
       }}
     >
+      {/* {props.branch}
+      {props.subject} */}
       <Box>
         <TextField
           onChange={(e) => handleInputs(e)}
-          label={"Subject Name"}
+          label={"Topic Name"}
           type={"text"}
           style={{
             width: "100%",
           }}
-          name="subjectName"
+          name="topicName"
           autoComplete="off"
         ></TextField>
       </Box>
       <Box>
         <TextField
           onChange={(e) => handleInputs(e)}
-          label={"Subject Code"}
+          label={"Topic Code"}
           type={"text"}
           style={{
             width: "100%",
             marginBlockStart: "1rem",
           }}
-          name="subjectCode"
+          name="topicCode"
           autoComplete="off"
         ></TextField>
       </Box>
@@ -91,4 +94,4 @@ const AddBranch = (props) => {
   );
 };
 
-export default AddBranch;
+export default AddTopic;

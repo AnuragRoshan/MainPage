@@ -82,10 +82,17 @@ router.get("/getBranch/:branch/:subject", (req, res) => {
 
 
 router.post("/addTopic", (req, res) => {
-  var objFriends = { topicName: "CSE212", topicCode: "topiccse212", article: "topic33" };
+
+  // console.log(req.body.initialValues.branch);
+  var branch = req.body.initialValues.branch;
+  var subject = req.body.initialValues.subject;
+  var topicName = req.body.topicName;
+  var topicCode = req.body.topicCode;
+  var article = req.body.article;
+  var objFriends = { topicName: topicName, topicCode: topicCode, article: article };
 
   Questions.findOneAndUpdate(
-    { branch: "CSE2" },
+    { branch: branch },
     {
       $push: {
         'subject.$[el].topics': objFriends,
@@ -93,7 +100,7 @@ router.post("/addTopic", (req, res) => {
     },
     {
       arrayFilters: [{
-        "el.subjectName": "CSE21",
+        "el.subjectName": subject,
 
       }]
     },

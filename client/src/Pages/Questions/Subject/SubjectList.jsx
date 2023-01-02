@@ -18,8 +18,8 @@ const BranchList = () => {
   // console.log(id);
   return (
     <Box>
-      <Box>{branchParams}</Box>
-      <Box>{subjectParams}</Box>
+      <Box>branch: {branchParams}</Box>
+      <Box>subject : {subjectParams}</Box>
     </Box>
   );
 };
