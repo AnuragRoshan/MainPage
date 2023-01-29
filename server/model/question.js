@@ -86,6 +86,10 @@ const questions = new mongoose.Schema({
         type: String,
         // required: true
     },
+    detailedSubTopic: {
+        type: String,
+        // required: true
+    },
     difficulty: {
         type: String,
         // required: true
