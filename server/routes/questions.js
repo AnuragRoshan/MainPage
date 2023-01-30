@@ -30,7 +30,6 @@ router.post("/addQuestion", (req, res) => {
         subTopic: subtopic,
         detailedSubTopic: detailedSubTopic,
         difficulty: difficulty,
-        difficulty: difficulty,
       });
       await Question.save();
       res.send("Question Added");

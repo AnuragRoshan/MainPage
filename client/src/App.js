@@ -1,10 +1,11 @@
-import { makeStyles } from "@material-ui/core";
+// import { makeStyles } from "@material-ui/core";
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes, } from 'react-router-dom';
 import Navbar from "./Component/Navbar";
 import './App.css';
-import Branch from "./Pages/Questions/Branch/Branch";
-import Topic from "./Pages/Questions/Topic/Topic";
+import AddQuestion from "./Pages/AddQuestion";
+// import Branch from "./Pages/Questions/Branch/Branch";
+// import Topic from "./Pages/Questions/Topic/Topic";
 
 
 function App() {
@@ -18,8 +19,8 @@ function App() {
       <div style={{ marginTop: "65px", paddingLeft: "0px" }}>
 
         <Routes>
-          < Route exact path="/questions" element={<Branch />} />
-          <Route exact path="/questions/:branchParams/:subjectParams" element={<Topic />} />
+          < Route exact path="/addQuestions" element={<AddQuestion />} />
+          {/* <Route exact path="/questions/:branchParams/:subjectParams" element={<Topic />} /> */}
 
         </Routes>
         {/* <Footer className={classes.footer} user={user} /> */}
