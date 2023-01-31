@@ -10,7 +10,10 @@ const Questions = require("../model/question");
 router.post("/addQuestion", (req, res) => {
   const question = req.body.question;
   const answer = req.body.answer;
-  const options = req.body.options;
+  const option1 = req.body.option1;
+  const option2 = req.body.option2;
+  const option3 = req.body.option3;
+  const option4 = req.body.option4;
   const subject = req.body.subject;
   const topic = req.body.topic;
   const subtopic = req.body.subtopic;
@@ -24,7 +27,10 @@ router.post("/addQuestion", (req, res) => {
       const Question = new Questions({
         question: question,
         answer: answer,
-        options: options,
+        option1: option1,
+        option2: option2,
+        option3: option3,
+        option4: option4,
         subject: subject,
         topic: topic,
         subTopic: subtopic,
@@ -47,9 +53,8 @@ router.get("/getAllSubjects", async (req, res) => {
 })
 
 // Get List Of All Topic Of Given Subject
-router.get("/getTopics", async (req, res) => {
-
-  const subject = req.body.subject;
+router.get("/getTopics/:subject", async (req, res) => {
+  const subject = req.params.subject;
   await Questions.aggregate([
     { $match: { subject: subject } },
     { $group: { _id: "$topic" } }
@@ -63,10 +68,10 @@ router.get("/getTopics", async (req, res) => {
 })
 
 // Get List Of All SubTopic Of Given Subject and Topic
-router.get("/getSubTopics", async (req, res) => {
+router.get("/getSubTopics/:subject/:topic", async (req, res) => {
 
-  const subject = req.body.subject;
-  const topic = req.body.topic;
+  const subject = req.params.subject;
+  const topic = req.params.topic;
   await Questions.aggregate([
     { $match: { subject: subject, topic: topic } },
     { $group: { _id: "$subTopic" } }
@@ -80,11 +85,11 @@ router.get("/getSubTopics", async (req, res) => {
 })
 
 // Get List Of All DetailedSubTopic Of Given Subject , Topic and Subtopic
-router.get("/getDetailedSubTopics", async (req, res) => {
-
-  const subject = req.body.subject;
-  const topic = req.body.topic;
-  const subTopic = req.body.subTopic;
+router.get("/getDetailedSubTopics/:subject/:topic/:subTopic", async (req, res) => {
+  // console.log(req.params.subTopic);
+  const subject = req.params.subject;
+  const topic = req.params.topic;
+  const subTopic = req.params.subTopic;
   await Questions.aggregate([
     { $match: { subject: subject, topic: topic, subTopic: subTopic } },
     { $group: { _id: "$detailedSubTopic" } }
