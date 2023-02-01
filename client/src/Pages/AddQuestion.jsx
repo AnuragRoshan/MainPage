@@ -70,77 +70,89 @@ const AddQuestion = () => {
 
   const handleInputs = (e) => {
     setQuestionState({ ...questionState, [e.target.name]: e.target.value });
-    // console.log(questionState);
+    // setSelectedDetailedSubTopic({...selectedDetailedSubTopic,e.target.value})
+    // setQuestionState({ ...questionState, ["option1"]: "ANURAG" });
+    console.log(questionState);
   };
+
+  let [subjectList, setSubjectList] = useState([]);
+
+  let [topicList, setTopicList] = useState([]);
+
+  let [subTopicList, setSubTopicList] = useState([]);
+
+  let [detailedSubTopicList, setDetailedSubTopicList] = useState([]);
 
   //GET LIST OF ALL SUJECTS
-  let [subjectList, setSubjectList] = useState([]);
-  let [selectedSubject, setSelectedSubject] = useState("");
-  const getSubjectLis = async () => {
-    await axios.get(`http://localhost:5000/getAllSubjects`).then((response) => {
-      subjectList = response.data;
-      console.log(subjectList);
-    });
+  const getSubjectList = async () => {
+    const { data } = await axios.get(`http://localhost:5000/getAllSubjects`);
+    setSubjectList(data);
   };
+  // console.log(subjectList);
+  // console.log(topicList);
 
   useEffect(() => {
-    getSubjectLis();
-    getTopicList();
-    getSubTopicList();
-    getDetailedSubTopicList();
-  });
+    const storedData = localStorage.getItem("questionState");
+    if (storedData) {
+      setQuestionState(JSON.parse(storedData));
+    }
+  }, []);
 
-  let [topicList, setTopicList] = useState({});
-  let [selectedTopic, setSelectedTopic] = useState("");
+  useEffect(() => {
+    localStorage.setItem("questionState2", JSON.stringify(questionState));
+  }, [questionState]);
+
+  useEffect(() => {
+    getSubjectList();
+    getTopicList();
+    setSubTopicList([]);
+    setDetailedSubTopicList([]);
+  }, [questionState.subject]);
+  useEffect(() => {
+    getSubTopicList();
+    setDetailedSubTopicList([]);
+  }, [questionState.topic]);
+  useEffect(() => {
+    getDetailedSubTopicList();
+  }, [questionState.subTopic]);
 
   const getTopicList = async () => {
-    if (selectedSubject === "") topicList = [];
-    else
-      await axios
-        .get(`http://localhost:5000/getTopics/` + selectedSubject)
-        .then((response) => {
-          topicList = response.data;
-          console.log(topicList);
-        });
+    const { data } = await axios.get(
+      `http://localhost:5000/getTopics/` + questionState.subject
+    );
+    setTopicList(data);
+    // console.log(topicList);
   };
-
-  let [SubTopicList, setSubTopicList] = useState({});
-  let [selectedSubTopic, setSelectedSubTopic] = useState("");
 
   const getSubTopicList = async () => {
-    if (selectedTopic === "") SubTopicList = [];
-    else
-      await axios
-        .get(
-          `http://localhost:5000/getSubTopics/` +
-            selectedSubject +
-            `/` +
-            selectedTopic
-        )
-        .then((response) => {
-          console.log(response.data);
-        });
+    // if (questionState.topic === "") subTopicList = [];
+    const { data } = await axios.get(
+      `http://localhost:5000/getSubTopics/` +
+        questionState.subject +
+        `/` +
+        questionState.topic
+    );
+    // console.log(data);
+    setSubTopicList(data);
+    // console.log(subTopicList);
   };
-  let [detailedSubTopicList, setDetailedSubTopicList] = useState({});
-  let [selectedDetailedSubTopic, setSelectedDetailedSubTopic] = useState("");
 
   const getDetailedSubTopicList = async () => {
-    if (selectedTopic === "") SubTopicList = [];
-    else
-      await axios
-        .get(
-          `http://localhost:5000/getDetailedSubTopics/` +
-            selectedSubject +
-            `/` +
-            selectedTopic +
-            `/` +
-            selectedSubTopic
-        )
-        .then((response) => {
-          console.log(response.data);
-        });
+    // console.log(questionState.subTopic);
+    const { data } = await axios.get(
+      `http://localhost:5000/getDetailedSubTopics/` +
+        questionState.subject +
+        `/` +
+        questionState.topic +
+        `/` +
+        questionState.subTopic
+    );
+    setDetailedSubTopicList(data);
+    // console.log(detailedSubTopicList);
+    // // console.log(data);
   };
-
+  // console.log(detailedSubTopicList);
+  // var mp = ["anurag", "anurag2", "anurag3"];
   // Send Data To Node JS Server End-------------------------------------------------------------
   return (
     <Box
@@ -246,7 +258,7 @@ const AddQuestion = () => {
               <label
                 className={classes.cap}
                 style={{ fontSize: "1.3rem" }}
-                for="options-dropdown"
+                htmlFor="options-dropdown"
               >
                 Choose Correct Option
               </label>
@@ -256,11 +268,7 @@ const AddQuestion = () => {
                 onChange={(e) => handleInputs(e)}
                 name="answer"
               >
-                <option
-                  className={classes.dropDown}
-                  style={{ borderRadius: "2rem" }}
-                  value="0"
-                >
+                <option className={classes.dropDown} value="0">
                   a
                 </option>
                 <option className={classes.dropDown} value="1">
@@ -285,57 +293,95 @@ const AddQuestion = () => {
               <label
                 className={classes.cap}
                 style={{ fontSize: "1.3rem" }}
-                for="options-dropdown"
+                htmlFor="options-dropdown"
               >
                 Choose Subject
               </label>
               <select
                 className={classes.select}
-                name="options-dropdown"
+                name="subject"
                 id=""
-              ></select>
+                onChange={(e) => handleInputs(e)}
+              >
+                {subjectList.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
             </Box>
             <Box style={{ flex: "1", marginBlockStart: "1rem" }}>
               <label
                 className={classes.cap}
                 style={{ fontSize: "1.3rem" }}
-                for="options-dropdown"
+                htmlFor="options-dropdown"
               >
                 Topic
               </label>
               <select
                 className={classes.select}
-                name="options-dropdown"
+                name="topic"
                 id=""
-              ></select>
+                onChange={(e) => handleInputs(e)}
+              >
+                {
+                  topicList.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))
+                  // console.log(topicList)
+                }
+              </select>
             </Box>
             <Box style={{ flex: "1", marginBlockStart: "1rem" }}>
               <label
                 className={classes.cap}
                 style={{ fontSize: "1.3rem" }}
-                for="options-dropdown"
+                htmlFor="options-dropdown"
               >
                 Subtopic
               </label>
               <select
                 className={classes.select}
-                name="options-dropdown"
+                name="subTopic"
+                onChange={(e) => handleInputs(e)}
                 id=""
-              ></select>
+              >
+                {/* TODO --------------------------------- */}
+                {
+                  subTopicList.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))
+                  // console.log(topicList)
+                }
+              </select>
             </Box>
             <Box style={{ flex: "1", marginBlockStart: "1rem" }}>
               <label
                 className={classes.cap}
                 style={{ fontSize: "1.3rem" }}
-                for="options-dropdown"
+                htmlFor="options-dropdown"
               >
                 DetailedSubTopic
               </label>
               <select
                 className={classes.select}
-                name="options-dropdown"
+                name="detailedSubTopic"
+                onChange={(e) => handleInputs(e)}
                 id=""
-              ></select>
+              >
+                {
+                  detailedSubTopicList.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))
+                  // console.log(topicList)
+                }
+              </select>
             </Box>
           </Box>
           <Box
@@ -349,7 +395,7 @@ const AddQuestion = () => {
               <label
                 className={classes.cap}
                 style={{ fontSize: "1.1rem" }}
-                for="options-dropdown"
+                htmlFor="options-dropdown"
               >
                 Difficulty
               </label>
@@ -358,9 +404,20 @@ const AddQuestion = () => {
               <select
                 className={classes.select}
                 style={{ width: "20%", height: "30px" }}
-                name="options-dropdown"
+                name="difficulty"
+                onChange={(e) => handleInputs(e)}
                 id=""
-              ></select>
+              >
+                <option className={classes.dropDown} value="Easy">
+                  Easy
+                </option>
+                <option className={classes.dropDown} value="Medium">
+                  Medium
+                </option>
+                <option className={classes.dropDown} value="Hard">
+                  Hard
+                </option>
+              </select>
             </Box>
           </Box>
           <Button style={{ backgroundColor: "whitesmoke", color: "#374953" }}>

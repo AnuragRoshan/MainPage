@@ -55,16 +55,13 @@ router.get("/getAllSubjects", async (req, res) => {
 // Get List Of All Topic Of Given Subject
 router.get("/getTopics/:subject", async (req, res) => {
   const subject = req.params.subject;
-  await Questions.aggregate([
-    { $match: { subject: subject } },
-    { $group: { _id: "$topic" } }
-  ], (err, topics) => {
+  await Questions.distinct("topic", { subject: subject }, (err, topic) => {
     if (err) {
       res.send(err);
     } else {
-      res.send(topics);
+      res.send(topic);
     }
-  });
+  })
 })
 
 // Get List Of All SubTopic Of Given Subject and Topic
@@ -72,16 +69,13 @@ router.get("/getSubTopics/:subject/:topic", async (req, res) => {
 
   const subject = req.params.subject;
   const topic = req.params.topic;
-  await Questions.aggregate([
-    { $match: { subject: subject, topic: topic } },
-    { $group: { _id: "$subTopic" } }
-  ], (err, topics) => {
+  await Questions.distinct("subTopic", { subject: subject, topic: topic }, (err, subTopic) => {
     if (err) {
       res.send(err);
     } else {
-      res.send(topics);
+      res.send(subTopic);
     }
-  });
+  })
 })
 
 // Get List Of All DetailedSubTopic Of Given Subject , Topic and Subtopic
@@ -90,16 +84,23 @@ router.get("/getDetailedSubTopics/:subject/:topic/:subTopic", async (req, res) =
   const subject = req.params.subject;
   const topic = req.params.topic;
   const subTopic = req.params.subTopic;
-  await Questions.aggregate([
-    { $match: { subject: subject, topic: topic, subTopic: subTopic } },
-    { $group: { _id: "$detailedSubTopic" } }
-  ], (err, topics) => {
+  await Questions.distinct("detailedSubTopic", { subject: subject, topic: topic, subTopic: subTopic }, (err, detailedSubTopic) => {
     if (err) {
       res.send(err);
     } else {
-      res.send(topics);
+      res.send(detailedSubTopic);
     }
-  });
+  })
+  // await Questions.aggregate([
+  //   { $match: { subject: subject, topic: topic, subTopic: subTopic } },
+  //   { $group: { _id: "$detailedSubTopic" } }
+  // ], (err, topics) => {
+  //   if (err) {
+  //     res.send(err);
+  //   } else {
+  //     res.send(topics);
+  //   }
+  // });
 })
 
 
