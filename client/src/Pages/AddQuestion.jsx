@@ -6,12 +6,14 @@ import { padding } from "@mui/system";
 import axios from "axios";
 
 //STYLING PART--------------------------------------------------------------------------
-const bgColor = "#5f727c";
+const bgColor = "#FFB200";
 const useStyles = makeStyles({
   cap: {
     padding: "0.5rem",
-    color: "whitesmoke",
+    color: "black",
     fontSize: "1.5rem",
+    fontWeight: "800",
+    fontFamily: "Montserrat",
   },
   input: {
     outline: "none",
@@ -23,19 +25,20 @@ const useStyles = makeStyles({
     // height: "100%",
     padding: "0.5rem",
     fontSize: "1.25rem",
-    color: "whitesmoke",
+    color: "black",
     fontFamily: "Montserrat",
+    // boxShadow: " rgb(58 53 65 / 10%) 0px 2px 90px 0px;",
   },
   select: {
     outline: "none  ",
     // border: "0",
-    background: "whitesmoke",
+    background: "black",
     height: "40px",
     width: "80%",
     fontFamily: "Montserrat",
     // color: "black",
     backgroundColor: bgColor,
-    color: "whitesmoke",
+    color: "black",
     marginBlockStart: "1rem",
     // padding: "1.35rem",
     textAlign: "center",
@@ -45,6 +48,18 @@ const useStyles = makeStyles({
   dropDown: {
     fontSize: "15px",
   },
+  formBox: {
+    marginInline: "10rem",
+    padding: "1rem",
+    borderRadius: "10px",
+    backgroundColor: "white",
+    // boxShadow: "-webkit-box-shadow: -1px 4px 66px -6px rgba(240,185,65,1);
+    // -moz-box-shadow:
+    // box-shadow: -1px 4px 66px -6px rgba(240,185,65,1);",
+    // WebkitBoxShadow: "-1px 4px 66px -6px rgba(240,185,65,1)",
+    // MozBoxShadow: "-1px 4px 66px -6px rgba(240,185,65,1)",
+    boxShadow: " rgb(58 53 65 / 10%) 0px 2px 90px 0px;",
+  },
 });
 // STYLING PART END ----------------------------------------------------------------------
 
@@ -52,21 +67,8 @@ const AddQuestion = () => {
   const classes = useStyles();
 
   // Send Data To Node JS Server Start-------------------------------------------------------------
-  const initialValues = {
-    question: "",
-    option1: "",
-    option2: "",
-    option3: "",
-    option4: "",
-    answer: "",
-    subject: "",
-    topic: "",
-    subTopic: "",
-    detailedSubTopic: "",
-    difficulty: "",
-  };
 
-  const [questionState, setQuestionState] = useState({ initialValues });
+  const [questionState, setQuestionState] = useState({});
 
   const handleInputs = (e) => {
     setQuestionState({ ...questionState, [e.target.name]: e.target.value });
@@ -83,6 +85,21 @@ const AddQuestion = () => {
 
   let [detailedSubTopicList, setDetailedSubTopicList] = useState([]);
 
+  const handlOtherInputs = (e) => {
+    // setQuestionState({ ...questionState, [e.target.name]: "" });
+    // // setQuestionState({ ...questionState, [e.target.name]: e.target.value });
+    // console.log(temp.subject);
+    // console.log(questionState);
+    // var s = temp.suject;
+    // // var k = "okkkkkk";
+    // setQuestionState({ ...questionState, [e.target.name]: s });
+    console.log(e.target.name);
+    console.log(e.target.value);
+    console.log(questionState);
+    // -----------------------------------------------------------------------------------------
+    // questionState.e.target.name = temp.e.target.name;
+  };
+
   //GET LIST OF ALL SUJECTS
   const getSubjectList = async () => {
     const { data } = await axios.get(`http://localhost:5000/getAllSubjects`);
@@ -92,17 +109,7 @@ const AddQuestion = () => {
   // console.log(topicList);
 
   useEffect(() => {
-    const storedData = localStorage.getItem("questionState");
-    if (storedData) {
-      setQuestionState(JSON.parse(storedData));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("questionState2", JSON.stringify(questionState));
-  }, [questionState]);
-
-  useEffect(() => {
+    console.log("ok");
     getSubjectList();
     getTopicList();
     setSubTopicList([]);
@@ -123,7 +130,6 @@ const AddQuestion = () => {
     setTopicList(data);
     // console.log(topicList);
   };
-
   const getSubTopicList = async () => {
     // if (questionState.topic === "") subTopicList = [];
     const { data } = await axios.get(
@@ -148,20 +154,28 @@ const AddQuestion = () => {
         questionState.subTopic
     );
     setDetailedSubTopicList(data);
-    // console.log(detailedSubTopicList);
-    // // console.log(data);
   };
-  // console.log(detailedSubTopicList);
-  // var mp = ["anurag", "anurag2", "anurag3"];
+
+  // Submit Post Request Start -----------------------------
+
+  const submitForm = async () => {
+    // alert("Submitted")
+    await axios
+      .post(`http://localhost:5000/addQuestion`, questionState)
+      .then((response) => {
+        var message = response.data.msg;
+        console.log(message);
+      });
+  }; // Submit Post Request End-----------------------------
+
   // Send Data To Node JS Server End-------------------------------------------------------------
   return (
     <Box
       sx={{
-        height: "inherit",
-        width: { xs: "100%", sm: "100%", md: "100%", lg: "100%", xl: "100%" },
-        bgcolor: "#374953",
-
-        fontFamily: "Montserrat",
+        height: "50rem",
+        // width: { xs: "100%", sm: "100%", md: "100%", lg: "100%", xl: "100%" },
+        bgcolor: "#d7dce0",
+        width: "100%",
       }}
     >
       <Box
@@ -169,13 +183,15 @@ const AddQuestion = () => {
           textAlign: "center",
           padding: "1.5rem",
           fontSize: "2rem",
-          color: "whitesmoke",
+          color: "black",
+          fontWeight: "800",
+          fontFamily: "Montserrat",
         }}
       >
         Admin ? Add Question Here !
       </Box>
-      <form>
-        <Box style={{ paddingInline: "10rem" }}>
+      <Box>
+        <Box className={classes.formBox}>
           <Box
             style={{ display: "flex", flexDirection: "row", padding: "1rem" }}
           >
@@ -254,33 +270,42 @@ const AddQuestion = () => {
                 ></input>
               </Box>
             </Box>
+
             <Box style={{ flex: "1", marginBlockStart: "1rem" }}>
-              <label
-                className={classes.cap}
-                style={{ fontSize: "1.3rem" }}
-                htmlFor="options-dropdown"
-              >
-                Choose Correct Option
-              </label>
-              <select
-                className={classes.select}
-                style={{ width: "30" }}
-                onChange={(e) => handleInputs(e)}
-                name="answer"
-              >
-                <option className={classes.dropDown} value="0">
-                  a
-                </option>
-                <option className={classes.dropDown} value="1">
-                  b
-                </option>
-                <option className={classes.dropDown} value="2">
-                  c
-                </option>
-                <option className={classes.dropDown} value="3">
-                  d
-                </option>
-              </select>
+              <Box>
+                <label
+                  className={classes.cap}
+                  style={{ fontSize: "1.3rem" }}
+                  htmlFor="options-dropdown"
+                >
+                  Choose Correct Option
+                </label>
+                <select
+                  className={classes.select}
+                  style={{ width: "30" }}
+                  onChange={(e) => handleInputs(e)}
+                  name="answer"
+                >
+                  <option value="" disabled selected style={{ color: "black" }}>
+                    Choose an option
+                  </option>
+                  <option className={classes.dropDown} value="0">
+                    a
+                  </option>
+                  <option className={classes.dropDown} value="1">
+                    b
+                  </option>
+                  <option className={classes.dropDown} value="2">
+                    c
+                  </option>
+                  <option className={classes.dropDown} value="3">
+                    d
+                  </option>
+                </select>
+              </Box>
+              <Box style={{ padding: "1rem" }}>
+                {/* ------------------------   */}
+              </Box>
             </Box>
           </Box>
           <Box
@@ -290,25 +315,85 @@ const AddQuestion = () => {
             }}
           >
             <Box style={{ flex: "1", marginBlockStart: "1rem" }}>
-              <label
-                className={classes.cap}
-                style={{ fontSize: "1.3rem" }}
-                htmlFor="options-dropdown"
+              <Box>
+                <label
+                  className={classes.cap}
+                  style={{ fontSize: "1.3rem" }}
+                  htmlFor="options-dropdown"
+                >
+                  Choose Subject
+                </label>
+                <select
+                  className={classes.select}
+                  name="subject"
+                  id=""
+                  onChange={(e) => handleInputs(e)}
+                >
+                  {/* <option value="" disabled selected style={{ color: "black" }}>
+                    Choose an option
+                  </option> */}
+                  {
+                    subjectList.map((c, i) => {
+                      if (i === 0)
+                        return (
+                          <>
+                            <option
+                              value=""
+                              disabled={i !== 0}
+                              selected={i === 0}
+                              style={{ color: "black" }}
+                            >
+                              Choose an option
+                            </option>
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          </>
+                        );
+                      else {
+                        return (
+                          <>
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          </>
+                        );
+                      }
+                    })
+                    // console.log(topicList)
+                  }
+                </select>
+              </Box>
+              <Box
+                style={{
+                  marginBlockStart: "0.8rem",
+                  color: "black",
+                }}
               >
-                Choose Subject
-              </label>
-              <select
-                className={classes.select}
-                name="subject"
-                id=""
-                onChange={(e) => handleInputs(e)}
-              >
-                {subjectList.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+                <Box>OR add new Subject</Box>
+                <Box
+                  style={{
+                    flex: "2",
+                    paddingBlock: "0px",
+                  }}
+                >
+                  <input
+                    className={classes.input}
+                    id="inputID"
+                    name="subject"
+                    onChange={(e) => {
+                      handleInputs(e);
+                    }}
+                    style={{
+                      width: "75%",
+                      marginInline: "0px",
+                      marginBlockStart: "1rem",
+                      paddingInline: "5px",
+                    }}
+                    type="text"
+                  ></input>
+                </Box>
+              </Box>
             </Box>
             <Box style={{ flex: "1", marginBlockStart: "1rem" }}>
               <label
@@ -325,14 +410,66 @@ const AddQuestion = () => {
                 onChange={(e) => handleInputs(e)}
               >
                 {
-                  topicList.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))
+                  topicList.map((c, i) => {
+                    if (i === 0)
+                      return (
+                        <>
+                          <option
+                            value=""
+                            disabled={i !== 0}
+                            selected={i === 0}
+                            style={{ color: "black" }}
+                          >
+                            Choose an option
+                          </option>
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        </>
+                      );
+                    else {
+                      return (
+                        <>
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        </>
+                      );
+                    }
+                  })
                   // console.log(topicList)
                 }
               </select>
+              <Box
+                style={{
+                  marginBlockStart: "0.8rem",
+                  color: "black",
+                }}
+              >
+                <Box>OR add new Topic</Box>
+                <Box
+                  style={{
+                    flex: "2",
+                    paddingBlock: "0px",
+                  }}
+                >
+                  <input
+                    className={classes.input}
+                    id="inputID"
+                    onChange={(e) => {
+                      handleInputs(e);
+                    }}
+                    name="topic"
+                    style={{
+                      width: "75%",
+                      marginInline: "0px",
+                      marginBlockStart: "1rem",
+                      paddingInline: "5px",
+                    }}
+                    type="text"
+                  ></input>
+                </Box>
+              </Box>
             </Box>
             <Box style={{ flex: "1", marginBlockStart: "1rem" }}>
               <label
@@ -350,14 +487,66 @@ const AddQuestion = () => {
               >
                 {/* TODO --------------------------------- */}
                 {
-                  subTopicList.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))
+                  subTopicList.map((c, i) => {
+                    if (i === 0)
+                      return (
+                        <>
+                          <option
+                            value=""
+                            disabled={i !== 0}
+                            selected={i === 0}
+                            style={{ color: "black" }}
+                          >
+                            Choose an option
+                          </option>
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        </>
+                      );
+                    else {
+                      return (
+                        <>
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        </>
+                      );
+                    }
+                  })
                   // console.log(topicList)
                 }
               </select>
+              <Box
+                style={{
+                  marginBlockStart: "0.8rem",
+                  color: "black",
+                }}
+              >
+                <Box>OR add new Subtopic</Box>
+                <Box
+                  style={{
+                    flex: "2",
+                    paddingBlock: "0px",
+                  }}
+                >
+                  <input
+                    className={classes.input}
+                    id="inputID"
+                    name="subTopic"
+                    onChange={(e) => {
+                      handleInputs(e);
+                    }}
+                    style={{
+                      width: "75%",
+                      marginInline: "0px",
+                      marginBlockStart: "1rem",
+                      paddingInline: "5px",
+                    }}
+                    type="text"
+                  ></input>
+                </Box>
+              </Box>
             </Box>
             <Box style={{ flex: "1", marginBlockStart: "1rem" }}>
               <label
@@ -374,14 +563,66 @@ const AddQuestion = () => {
                 id=""
               >
                 {
-                  detailedSubTopicList.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))
+                  detailedSubTopicList.map((c, i) => {
+                    if (i === 0)
+                      return (
+                        <>
+                          <option
+                            value=""
+                            disabled={i !== 0}
+                            selected={i !== 0}
+                            style={{ color: "black" }}
+                          >
+                            Choose an option
+                          </option>
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        </>
+                      );
+                    else {
+                      return (
+                        <>
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        </>
+                      );
+                    }
+                  })
                   // console.log(topicList)
                 }
               </select>
+              <Box
+                style={{
+                  marginBlockStart: "0.8rem",
+                  color: "black",
+                }}
+              >
+                <Box>OR add new </Box>
+                <Box
+                  style={{
+                    flex: "2",
+                    paddingBlock: "0px",
+                  }}
+                >
+                  <input
+                    className={classes.input}
+                    id="inputID"
+                    onChange={(e) => {
+                      handleInputs(e);
+                    }}
+                    name="detailedSubTopic"
+                    style={{
+                      width: "75%",
+                      marginInline: "0px",
+                      marginBlockStart: "1rem",
+                      paddingInline: "5px",
+                    }}
+                    type="text"
+                  ></input>
+                </Box>
+              </Box>
             </Box>
           </Box>
           <Box
@@ -408,6 +649,9 @@ const AddQuestion = () => {
                 onChange={(e) => handleInputs(e)}
                 id=""
               >
+                <option value="" disabled selected style={{ color: "black" }}>
+                  Choose an option
+                </option>
                 <option className={classes.dropDown} value="Easy">
                   Easy
                 </option>
@@ -420,11 +664,18 @@ const AddQuestion = () => {
               </select>
             </Box>
           </Box>
-          <Button style={{ backgroundColor: "whitesmoke", color: "#374953" }}>
+          <Button
+            onClick={() => submitForm()}
+            style={{
+              backgroundColor: bgColor,
+              color: "black",
+              fontSize: "1.1rem",
+            }}
+          >
             Add Question
           </Button>
         </Box>
-      </form>
+      </Box>
     </Box>
   );
 };

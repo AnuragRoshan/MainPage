@@ -8,7 +8,44 @@ const Questions = require("../model/question");
 // ADD BRANCH
 // POST REQUEST
 router.post("/addQuestion", (req, res) => {
-  const question = req.body.question;
+  // try {
+  //   const question = req.body.question;
+  //   const answer = req.body.answer;
+  //   const option1 = req.body.option1;
+  //   const option2 = req.body.option2;
+  //   const option3 = req.body.option3;
+  //   const option4 = req.body.option4;
+  //   const subject = req.body.subject;
+  //   const topic = req.body.topic;
+  //   const subtopic = req.body.subtopic;
+  //   const detailedSubTopic = req.body.detailedSubTopic;
+  //   const difficulty = req.body.difficulty;
+  //   doc = await Questions.findOne({ question: question });
+  //   if (doc) {
+  //     res.status(200).json({ msg: "Question Already Present In Database" })
+  //   }
+  //   else if (!doc) {
+  //     const Question = new Questions({
+  //       question: question,
+  //       answer: answer,
+  //       option1: option1,
+  //       option2: option2,
+  //       option3: option3,
+  //       option4: option4,
+  //       subject: subject,
+  //       topic: topic,
+  //       subTopic: subtopic,
+  //       detailedSubTopic: detailedSubTopic,
+  //       difficulty: difficulty,
+  //     });
+  //     Question.save();
+  //     return res.status(200).json({ msg: "Question Added Succesfully" })
+
+  //   }
+  // } catch (error) {
+  //   res.status(500).json({ msg: "Error while submitting the form" })
+  // }
+  const question = req.body.questions;
   const answer = req.body.answer;
   const option1 = req.body.option1;
   const option2 = req.body.option2;
@@ -16,13 +53,13 @@ router.post("/addQuestion", (req, res) => {
   const option4 = req.body.option4;
   const subject = req.body.subject;
   const topic = req.body.topic;
-  const subtopic = req.body.subtopic;
+  const subTopic = req.body.subTopic;
   const detailedSubTopic = req.body.detailedSubTopic;
   const difficulty = req.body.difficulty;
 
+  console.log(req.body);
   Questions.findOne({ question: question }, async (err, doc) => {
     if (err) throw err;
-    if (doc) res.send("Question Already Exists");
     if (!doc) {
       const Question = new Questions({
         question: question,
@@ -33,13 +70,15 @@ router.post("/addQuestion", (req, res) => {
         option4: option4,
         subject: subject,
         topic: topic,
-        subTopic: subtopic,
+        subTopic: subTopic,
         detailedSubTopic: detailedSubTopic,
         difficulty: difficulty,
       });
       await Question.save();
-      res.send("Question Added");
+      return res.status(200).json({ msg: "Question Added SuccessFully" })
+
     }
+    else if (doc) return res.status(200).json({ msg: " Question Already Exist" })
   });
 
 });
